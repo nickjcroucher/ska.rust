@@ -118,7 +118,11 @@ impl<'a> AlnWriter<'a> {
             }
 
             // First half of split k-mer
-            let start = mapped_pos - self.half_split_len;
+            let start = if self.last_written  == 0 {
+                0
+            } else {
+                self.last_written + 1
+            };
             let end = mapped_pos;
             self.seq_out[(start + self.chrom_offset)..(end + self.chrom_offset)]
                 .copy_from_slice(&self.ref_seq[self.curr_chrom][start..end]);
@@ -126,7 +130,7 @@ impl<'a> AlnWriter<'a> {
             self.seq_out[mapped_pos + self.chrom_offset] = base;
 
             // update indices
-            self.next_pos = mapped_pos + self.half_split_len + 1;
+            self.next_pos = mapped_pos + 1;
             self.last_mapped = mapped_pos;
             self.last_written = mapped_pos;
         }
