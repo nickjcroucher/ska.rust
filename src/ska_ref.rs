@@ -286,14 +286,16 @@ where
             .enumerate()
             .for_each(|(idx, seq)| {
                 let sample_vars = self.mapped_variants.slice(s![.., idx]);
-                for ((mapped_chrom, mapped_pos), base) in
-                    self.mapped_pos.iter().zip(sample_vars.iter())
-                {
-                    if *base != b'-' {
-                        seq.write_split_kmer(*mapped_pos, *mapped_chrom, *base);
-                    }
+                if self.mapped_pos.len() == 1 {
+                  for ((mapped_chrom, mapped_pos), base) in
+                      self.mapped_pos.iter().zip(sample_vars.iter())
+                  {
+                      if *base != b'-' {
+                          seq.write_split_kmer(*mapped_pos, *mapped_chrom, *base);
+                      }
+                  }
+                  seq.finalise();
                 }
-                seq.finalise();
             });
         seq_writers
     }
